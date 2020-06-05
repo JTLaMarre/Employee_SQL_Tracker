@@ -10,14 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/JTLaMarre/Employee_SQL_Tracker.git"
   },
-  "author": "",
+  "author": "Jacob LaMarre",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/JTLaMarre/Employee_SQL_Tracker/issues"
   },
-  "homepage": "https://github.com/JTLaMarre/Employee_SQL_Tracker#readme",
-  "dependencies": {
-    "inquirer": "^7.1.0",
-    "mysql": "^2.18.1"
-  }
+  "homepage": "https://github.com/JTLaMarre/Employee_SQL_Tracker#readme"
 }
