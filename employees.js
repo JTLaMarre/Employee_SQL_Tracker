@@ -126,12 +126,34 @@ const AddEmployees = () => {
           if (err) throw err;
           console.log(res.affectedRows + "  employee added\n");
           // Call updateProduct AFTER the INSERT completes
-          connection.end
+          MoreEmployees()
         }
       );
     
       // logs the actual query being run
       console.log(query.sql);
+    })
+  }
+  const MoreEmployees =()=>{
+    inquirer
+    .prompt([
+      {type: "list",
+      choices:["Add more employees","Do something else","exit"],
+      name:"more"
+    }
+    ]).then(res=>{
+      if (res.more==="Add more employees"){
+        connection.end
+        AddEmployees()
+      }
+      if(res.more==="Do something else"){
+        connection.end
+        init()
+      }
+      if(res.more==="exit"){
+        connection.end
+        console.log("Goodbye (ctrl+C to leave command line app)")
+      }
     })
   }
       const ViewDepart = () => { console.log(" view department") }
