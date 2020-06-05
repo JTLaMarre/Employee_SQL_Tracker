@@ -25,7 +25,7 @@ inquirer
     {
       type: "list",
       message: "What are we doing today?",
-      choices: ["Add departments", "ADD roles", "ADD employees", "View departments", "View roles", "View employees", "Update employee roles"],
+      choices: ["Add departments", "ADD roles", "ADD employees", "View departments", "View roles", "View employees", "Update employee roles","remove employee"],
       name: "init"
     }
   ])
@@ -55,6 +55,9 @@ inquirer
     }
     if (answers.init === "Update employee roles") {
       UpdatEmployeeRole()
+    }
+    if(answers.init ==="remove employee"){
+      RemoveEmployee()
     }
   })
   .catch(error => {
@@ -156,9 +159,41 @@ const AddEmployees = () => {
       }
     })
   }
+  const RemoveEmployee=()=>{
+    inquirer.prompt([
+      {
+        type:"name",
+        message:"employee first name to remove",
+        name:"name"
+      }
+    ]).then(answer=>{
+      console.log(`Deleting all employee's named...${answer.name}\n`);
+      connection.query(
+        "DELETE FROM employee WHERE ?",
+        {
+          first_name: answer.name
+        },
+        function(err, res) {
+          if (err) throw err;
+          console.log(res.affectedRows + " employee(s) removed lets do something else!\n");
+          setTimeout(()=>{init()},3000)
+        }
+      );
+    })
+  }
       const ViewDepart = () => { console.log(" view department") }
       const ViewRole = () => { console.log("view role") }
-      const ViewEmployees = () => { console.log("view employees") }
+      const ViewEmployees = () => { 
+        console.log("Viewing all Employees...\n");
+        connection.query("SELECT * FROM employee", function(err, res) {
+          if (err) throw err;
+          
+          console.log(res);
+          console.log("------------------------------------------")
+          console.log("returning to main menu in 10 seconds")
+          setTimeout(()=>init(),10000)
+        });
+       }
       const UpdatEmployeeRole = () => { console.log("update") }
 
 
