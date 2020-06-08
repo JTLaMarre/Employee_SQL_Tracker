@@ -62,7 +62,7 @@ const init = () => {
       if (answers.init === "Remove department") {
         RemoveDepart()
       }
-      if (answers.init === "Remove role") {
+      if (answers.init === "Remove Role") {
         RemoveRole()
       }
       if(answers.init === "exit"){
@@ -96,7 +96,7 @@ const AddDepart = () => {
         },
         function (err, res) {
           if (err) throw err;
-          console.log(res.affectedRows + "  department added\n");
+          console.table(res.affectedRows + "  department added\n");
           init()
         }
       );
@@ -136,7 +136,7 @@ const AddRoles = () => {
         },
         function (err, res) {
           if (err) throw err;
-          console.log(res.affectedRows + "  role added\n");
+          console.table(res.affectedRows + "  role added\n");
           init()
         }
       );
@@ -160,6 +160,11 @@ const AddEmployees = () => {
       },
       {
         tpye: "number",
+        message: "what is the employee's role  id?",
+        name: "role_id"
+      },
+      {
+        tpye: "number",
         message: "manager id type 0 if no manager id?",
         name: "manager_id"
       }
@@ -170,11 +175,12 @@ const AddEmployees = () => {
         {
           first_name: res.first_name,
           last_name: res.last_name,
+          role_id:res.role_id,
           manager_id: res.manager_id
         },
         function (err, res) {
           if (err) throw err;
-          console.log(res.affectedRows + "  employee added\n");
+          console.table(res.affectedRows + "  employee added\n");
           init()
         }
       );
@@ -200,8 +206,8 @@ const RemoveEmployee = () => {
       },
       function (err, res) {
         if (err) throw err;
-        console.log(res.affectedRows + " employee(s) removed lets do something else! returning to main menu shortly\n");
-        setTimeout(() => { init() }, 1000)
+        console.table(res.affectedRows + " employee(s) removed lets do something else!") 
+        init() 
       }
     );
   })
@@ -210,23 +216,24 @@ const RemoveRole = ()=>{
   inquirer.prompt([
     {
       type: "input",
-      message: "Role title to remove",
-      name: "title"
+      message: "role title to remove",
+      name: "name"
     }
   ]).then(answer => {
-    console.log(`Deleting all Roles titled...${answer.title}\n`);
+    console.log(`Deleting all roles titled...${answer.name}\n`);
     connection.query(
       "DELETE FROM role WHERE ?",
       {
-        title: answer.title
+        title: answer.name
       },
       function (err, res) {
         if (err) throw err;
-        console.log(res.affectedRows + " Role(s) removed lets do something else!(returning to main menu in shortly\n");
-        setTimeout(() => { init() }, 1000)
+        console.table(res.affectedRows + " role(s) removed lets do something else!") 
+        init() 
       }
     );
   })
+  
 }
 const RemoveDepart =()=>{
   inquirer.prompt([
@@ -244,25 +251,70 @@ const RemoveDepart =()=>{
       },
       function (err, res) {
         if (err) throw err;
-        console.log(res.affectedRows + " Department(s) removed lets do something else!(returning to main menu in shortly\n");
-        setTimeout(() => { init() }, 1000)
+        console.table(res.affectedRows + " Department(s) removed lets do something else!") 
+        init()
       }
     );
   })
 }
-const ViewDepart = () => { console.log(" view department") }
-const ViewRole = () => { console.log("view role") }
+const ViewDepart = () => { console.log("Viewing all departments...\n");
+connection.query("SELECT * FROM department", function (err, res) {
+  if (err) throw err;
+
+  console.table(res);
+  console.log("------------------------------------------")
+   init()
+});}
+const ViewRole = () => { console.log("Viewing all roles...\n");
+connection.query("SELECT * FROM role", function (err, res) {
+  if (err) throw err;
+
+  console.table(res);
+  console.log("------------------------------------------")
+  init()
+}); }
 const ViewEmployees = () => {
   console.log("Viewing all Employees...\n");
   connection.query("SELECT * FROM employee", function (err, res) {
     if (err) throw err;
 
-    console.log(res);
+    console.table(res);
     console.log("------------------------------------------")
-    console.log("returning to main menu in 10 seconds")
-    setTimeout(() => init(), 10000)
+    init()
   });
 }
-const UpdatEmployeeRole = () => { console.log("update") }
+const UpdatEmployeeRole = () => { 
+  inquirer.prompt([
+    {
+      type:"input",
+      message:"what which employee's role would you like to update?",
+      name:"employee"
+    },
+    {
+      type:"number",
+      message:"what is the new role id?",
+      name:"new_role"
+    }
+
+  ]).then(res=>{
+    console.log(`updating ${res.employee}'s role to ${res.new_role}`);
+    var query = connection.query(
+      "UPDATE employee SET ? WHERE ?",
+      [
+        {
+          role_id:res.new_role
+        },
+        {
+          first_name: res.employee
+        }
+      ],
+      function(err, res) {
+        if (err) throw err;
+        console.log(res.affectedRows + "  role updated!\n");
+        init()
+      }
+    );
+  })
+ }
 
 
